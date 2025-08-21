@@ -1,6 +1,7 @@
 package jiohh.couponrush.domain;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 
 import java.time.Instant;
@@ -11,7 +12,8 @@ import java.time.Instant;
         indexes = {@Index(name = "coupon_uid_index", columnList = "uid", unique = true)}
 )
 @Getter
-public class CouponIssues {
+@Builder
+public class CouponIssue {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -19,17 +21,24 @@ public class CouponIssues {
     @Column(nullable = false, length = 128, unique = true)
     private String uid;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER) //같이 조회하는 경우가 많은 것으로 판단
     @JoinColumn(name = "coupon_code", nullable = false)
     private Coupon coupon;
 
     @Column(name = "issued_at", nullable = false)
     private Instant issuedAt;
 
-    public CouponIssues() {
+    public CouponIssue() {
     }
 
-    public CouponIssues(Long id, String uid, Instant issuedAt) {
+    public CouponIssue(Long id, String uid, Coupon coupon, Instant issuedAt) {
+        this.id = id;
+        this.uid = uid;
+        this.coupon = coupon;
+        this.issuedAt = issuedAt;
+    }
+
+    public CouponIssue(Long id, String uid, Instant issuedAt) {
         this.id = id;
         this.uid = uid;
         this.issuedAt = issuedAt;

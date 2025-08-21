@@ -58,4 +58,8 @@ public class Coupon {
         void onUpdate(){
             this.updatedAt = Instant.now();
         }
+
+        public void resetStock() {
+                this.remainingStock = this.initialStock;
+        }
 }

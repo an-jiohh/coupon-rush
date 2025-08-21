@@ -39,15 +39,12 @@ public class Coupon {
         public Coupon() {
         }
 
-        public Coupon(long id, String code, String name, int initialStock, int remainingStock, int probWeight, Instant createAt, Instant updatedAt) {
-                this.id = id;
+        public Coupon(String code, String name, int initialStock, int probWeight) {
                 this.code = code;
                 this.name = name;
                 this.initialStock = initialStock;
-                this.remainingStock = remainingStock;
+                this.remainingStock = initialStock;
                 this.probWeight = probWeight;
-                this.createAt = createAt;
-                this.updatedAt = updatedAt;
         }
 
         @PrePersist

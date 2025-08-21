@@ -1,6 +1,7 @@
 package jiohh.couponrush.domain;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 
 import java.time.Instant;
 
@@ -9,6 +10,7 @@ import java.time.Instant;
         name = "coupon_issues",
         indexes = {@Index(name = "coupon_uid_index", columnList = "uid", unique = true)}
 )
+@Getter
 public class CouponIssues {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,8 +19,9 @@ public class CouponIssues {
     @Column(nullable = false, length = 128, unique = true)
     private String uid;
 
-    @Column(name = "coupon_code", nullable = false, length = 32)
-    private String couponCode;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "coupon_code", nullable = false)
+    private Coupon coupon;
 
     @Column(name = "issued_at", nullable = false)
     private Instant issuedAt;
@@ -26,10 +29,9 @@ public class CouponIssues {
     public CouponIssues() {
     }
 
-    public CouponIssues(Long id, String uid, String couponCode, Instant issuedAt) {
+    public CouponIssues(Long id, String uid, Instant issuedAt) {
         this.id = id;
         this.uid = uid;
-        this.couponCode = couponCode;
         this.issuedAt = issuedAt;
     }
     /*

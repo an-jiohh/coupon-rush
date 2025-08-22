@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CouponRepository extends JpaRepository<Coupon, Long> {
+    Boolean existsByCode(String code);
     //1. 재시도 로직(락 X)
     Optional<Coupon> findByCode(String code);
 

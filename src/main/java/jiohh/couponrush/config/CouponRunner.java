@@ -17,9 +17,15 @@ public class CouponRunner implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        couponRepository.save(new Coupon("A", "m340i", 1, 1));
-        couponRepository.save(new Coupon("B", "맥북 프로", 30, 10));
-        couponRepository.save(new Coupon("C", "마이쮸", 69, 89));
+        if(!couponRepository.existsByCode("A")) {
+            couponRepository.save(new Coupon("A", "m340i", 1, 1));
+        }
+        if(!couponRepository.existsByCode("B")) {
+            couponRepository.save(new Coupon("B", "맥북 프로", 30, 10));
+        }
+        if(!couponRepository.existsByCode(("C"))){
+            couponRepository.save(new Coupon("C", "마이쮸", 69, 89));
+        }
         log.info("초기 쿠폰 생성 성공");
     }
 }

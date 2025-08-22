@@ -3,16 +3,13 @@ package jiohh.couponrush.service;
 import jiohh.couponrush.domain.Coupon;
 import jiohh.couponrush.dto.IssueResult;
 import jiohh.couponrush.exception.SoldOutException;
-import jiohh.couponrush.repository.CouponIssuesRepository;
 import jiohh.couponrush.repository.CouponRepository;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Random;
@@ -20,7 +17,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 @Slf4j
 @SpringBootTest
-class CouponServiceTest {
+class CouponServiceUpdateLockTest {
 
     @Autowired
     private CouponRepository couponRepository;
@@ -29,7 +26,7 @@ class CouponServiceTest {
     private ResetUtil resetUtil;
 
     @Autowired
-    private CouponService couponService;
+    private CouponServiceUpdateLock couponServiceUpdateLock;
 
     @BeforeEach
 //    @Transactional -> 테스트에서 Transactional은 롤백되는 것을 까먹지 말것!
@@ -49,7 +46,7 @@ class CouponServiceTest {
         //given
         String uid = "u1";
         //when
-        IssueResult result = couponService.issueCoupon(uid);
+        IssueResult result = couponServiceUpdateLock.issueCoupon(uid);
         //then
         Assertions.assertThat(result.getUid()).isEqualTo(uid);
         List<Coupon> all = couponRepository.findAll();
@@ -63,8 +60,8 @@ class CouponServiceTest {
         //given
         String uid = "u1";
         //when
-        IssueResult result1 = couponService.issueCoupon(uid);
-        IssueResult result2 = couponService.issueCoupon(uid);
+        IssueResult result1 = couponServiceUpdateLock.issueCoupon(uid);
+        IssueResult result2 = couponServiceUpdateLock.issueCoupon(uid);
         //then
         Assertions.assertThat(result1.getCouponCode()).isEqualTo(result2.getCouponCode());
         Assertions.assertThat(result1.getIssuedAt()).isEqualTo(result2.getIssuedAt());
@@ -73,9 +70,9 @@ class CouponServiceTest {
     @Test
     void 전체_품절이면_SoldOut() {
         //given
-        for(int i = 0; i < 100; i++) couponService.issueCoupon(String.valueOf(i));
+        for(int i = 0; i < 100; i++) couponServiceUpdateLock.issueCoupon(String.valueOf(i));
         //when
         //then
-        org.junit.jupiter.api.Assertions.assertThrows(SoldOutException.class,() -> couponService.issueCoupon("101"));
+        org.junit.jupiter.api.Assertions.assertThrows(SoldOutException.class,() -> couponServiceUpdateLock.issueCoupon("101"));
     }
 }

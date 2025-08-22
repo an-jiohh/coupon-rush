@@ -8,17 +8,16 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 @SpringBootTest
-public class CouponServiceConcurrencyTest {
+public class CouponServiceUpdateLockConcurrencyTest {
 
     @Autowired
-    CouponService couponService;
+    CouponServiceUpdateLock couponServiceUpdateLock;
     @Autowired
     ResetUtil resetUtil;
     @Autowired
@@ -47,7 +46,7 @@ public class CouponServiceConcurrencyTest {
                 try {
                     ready.countDown();
                     start.await();
-                    couponService.issueCoupon(uid);
+                    couponServiceUpdateLock.issueCoupon(uid);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 } finally {

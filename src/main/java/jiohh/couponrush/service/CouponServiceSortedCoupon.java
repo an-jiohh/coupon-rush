@@ -25,6 +25,22 @@ public class CouponServiceSortedCoupon implements CouponService {
 
     private static final String REDIS_COUNTER_KEY = "REDIS_COUNTER_KEY";
 
+    /**
+     * Issues a coupon for the given user ID, returning the issuance details.
+     *
+     * <p>If a coupon has already been issued to the given UID, returns that existing issuance.
+     * Otherwise increments a Redis counter to allocate the next ordered coupon:
+     * - If the counter exceeds 100, a {@link SoldOutException} is thrown.
+     * - If no coupon exists for the allocated order, an {@link OverflowCouponException} is thrown.
+     * <p>When a coupon is successfully allocated a new {@code CouponSortIssued} is created
+     * (with the same id and coupon as the ordered entry), persisted, and its issuance timestamp
+     * is returned in the result.
+     *
+     * @param uid the user identifier to issue the coupon for
+     * @return an {@link IssueResult} containing uid, coupon name, coupon code, and issuedAt (ISO-8601 string)
+     * @throws SoldOutException if the Redis counter increments beyond the allowed issuance limit (100)
+     * @throws OverflowCouponException if no coupon is found for the allocated issue order
+     */
     @Override
     @Transactional
     public IssueResult issueCoupon(String uid) {

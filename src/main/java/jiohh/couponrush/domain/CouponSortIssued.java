@@ -34,14 +34,34 @@ public class CouponSortIssued {
     @Column(name = "issue_order", nullable = false)
     private Long issueOrder;
 
+    /**
+     * No-argument constructor required by JPA and other persistence frameworks.
+     *
+     * Creates an empty CouponSortIssued instance. Prefer the builder or the parameterized constructors for application code.
+     */
     public CouponSortIssued() {
     }
 
+    /**
+     * Creates a new CouponSortIssued with the given coupon and ordering.
+     *
+     * @param coupon the associated Coupon (required; corresponds to the non-null foreign key)
+     * @param issueOrder the non-null ordering value used for sorting/sequencing issued coupons
+     */
     public CouponSortIssued(Coupon coupon, Long issueOrder) {
         this.coupon = coupon;
         this.issueOrder = issueOrder;
     }
 
+    /**
+     * Full-value constructor for creating a CouponSortIssued instance with all mapped fields.
+     *
+     * @param id         primary key value (may be null for new/transient instances)
+     * @param uid        optional unique identifier (nullable, max length 128 as persisted)
+     * @param coupon     associated Coupon (non-null; mapped as a many-to-one relation)
+     * @param issuedAt   optional issuance timestamp (nullable)
+     * @param issueOrder non-null ordering/sequencing value used for sorting
+     */
     public CouponSortIssued(Long id, String uid, Coupon coupon, Instant issuedAt,Long issueOrder) {
         this.issuedAt = issuedAt;
         this.id = id;

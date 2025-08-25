@@ -27,6 +27,16 @@ public class CouponRunner implements ApplicationRunner {
 
     private final static String REDIS_COUNTER_KEY = "REDIS_COUNTER_KEY";
 
+    /**
+     * Runs at application startup to seed initial coupon data and initialize the issuance counter in Redis.
+     *
+     * <p>Ensures three coupon types (codes "A", "B", "C") exist, creates a pre-seeded list of 100 issuance
+     * entries with a distribution of 1×A, 30×B, 69×C (shuffled), persists those issuance records, and writes
+     * the current maximum issuance order to Redis under REDIS_COUNTER_KEY.</p>
+     *
+     * @param args startup arguments (unused)
+     * @throws Exception if repository or Redis operations fail
+     */
     @Override
     public void run(ApplicationArguments args) throws Exception {
         Coupon couponA = new Coupon("A", "m340i", 1, 1);

@@ -6,5 +6,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface CouponIssuesRepository extends JpaRepository<CouponIssue, Long> {
-    Optional<CouponIssue> findByUid(String uid);
+    /**
+ * Finds a CouponIssue by its unique identifier.
+ *
+ * @param uid the unique identifier (uid) of the coupon issue
+ * @return an Optional containing the matching CouponIssue, or empty if none is found
+ */
+Optional<CouponIssue> findByUid(String uid);
 }

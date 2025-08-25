@@ -28,9 +28,23 @@ public class CouponIssue {
     @Column(name = "issued_at", nullable = false)
     private Instant issuedAt;
 
+    /**
+     * JPA-required no-argument constructor for entity instantiation by frameworks.
+     *
+     * <p>Declared public for JPA and proxying libraries; application code should use the
+     * builder or other constructors when creating instances with meaningful state.
+     */
     public CouponIssue() {
     }
 
+    /**
+     * Creates a CouponIssue instance with all fields initialized.
+     *
+     * @param id        primary key value (may be null for transient/new entities)
+     * @param uid       unique identifier for the issued coupon (non-null, max length 128)
+     * @param coupon    associated Coupon entity (non-null)
+     * @param issuedAt  timestamp when the coupon was issued (represents the business event time)
+     */
     public CouponIssue(Long id, String uid, Coupon coupon, Instant issuedAt) {
         this.id = id;
         this.uid = uid;
@@ -38,6 +52,15 @@ public class CouponIssue {
         this.issuedAt = issuedAt;
     }
 
+    /**
+     * Creates a CouponIssue with the given id, uid, and issuance timestamp, omitting the associated Coupon.
+     *
+     * Useful when the coupon association is not available or not required (for projections, partial updates, or tests).
+     *
+     * @param id        the primary key (may be null for a new/transient entity)
+     * @param uid       the unique coupon issuance identifier (max length 128, non-null in persisted entities)
+     * @param issuedAt  the timestamp when the coupon was issued
+     */
     public CouponIssue(Long id, String uid, Instant issuedAt) {
         this.id = id;
         this.uid = uid;

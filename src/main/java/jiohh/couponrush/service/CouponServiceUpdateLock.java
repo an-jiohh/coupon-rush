@@ -25,6 +25,22 @@ public class CouponServiceUpdateLock implements CouponService{
 
     private static final int MAX_RETRY = 3;
 
+    /**
+     * Issues a coupon for the given user ID using an update-lock style flow.
+     *
+     * <p>If a coupon has already been issued for the provided uid, returns that existing
+     * issuance (idempotent behavior). Otherwise the method attempts up to {@code MAX_RETRY}
+     * times to pick an available coupon (weighted by probability), decrement its stock,
+     * persist a new CouponIssue, and return the issuance details.
+     *
+     * <p>Side effects: decrements coupon stock in the repository and saves a new
+     * CouponIssue when issuance succeeds.
+     *
+     * @param uid the unique identifier of the user requesting a coupon
+     * @return an IssueResult containing uid, coupon name, coupon code, and issuance timestamp
+     * @throws SoldOutException if there are no available coupons at the time of checking
+     * @throws ContentionException if issuance fails due to contention after {@code MAX_RETRY} attempts
+     */
     @Transactional
     public IssueResult issueCoupon(String uid) {
         Optional<CouponIssue> existing = couponIssuesRepository.findByUid(uid);
@@ -69,6 +85,20 @@ public class CouponServiceUpdateLock implements CouponService{
         throw new ContentionException();
     }
 
+    /**
+     * Selects a coupon from the provided list using weighted random selection based on each
+     * coupon's `probWeight`.
+     *
+     * The probability of returning a particular coupon is its `probWeight` divided by the
+     * sum of all coupons' `probWeight`. Uses ThreadLocalRandom to draw an integer in
+     * [1, sum] and returns the first coupon whose accumulated weight meets or exceeds
+     * that draw.
+     *
+     * @param available list of candidate coupons; expected to contain at least one coupon
+     *                  with positive `probWeight`
+     * @return a selected Coupon chosen proportionally to its `probWeight`
+     * @throws SoldOutException if no coupon can be selected (e.g., empty list or all weights zero)
+     */
     private Coupon pickCoupon(List<Coupon> available) {
         int sum = 0;
         for(Coupon c: available) sum += c.getProbWeight();

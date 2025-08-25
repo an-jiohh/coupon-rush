@@ -10,6 +10,14 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ServiceConfig {
 
+    /**
+     * Declares a CouponService bean implemented by CouponServiceUpdateLock.
+     *
+     * The returned instance is constructed with the provided repositories and exposed
+     * in the Spring application context as the CouponService type.
+     *
+     * @return a CouponService backed by a CouponServiceUpdateLock
+     */
     @Bean
     public CouponService couponService(CouponRepository couponRepository, CouponIssuesRepository couponIssuesRepository) {
         return new CouponServiceUpdateLock(couponRepository, couponIssuesRepository);

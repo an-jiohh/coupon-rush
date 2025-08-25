@@ -28,6 +28,13 @@ public class ResetUtil {
 
     private final static String REDIS_COUNTER_KEY = "REDIS_COUNTER_KEY";
 
+    /**
+     * Reset all coupon-related state for tests.
+     *
+     * Deletes all coupon issue records and restores every Coupon's stock to its initial state, then flushes
+     * changes to the database. This method is executed within a transaction and will be rolled back if the
+     * transaction fails.
+     */
     @Transactional
     public void resetCouponAll() {
         couponIssuesRepository.deleteAllInBatch();
@@ -36,6 +43,13 @@ public class ResetUtil {
         couponRepository.flush();
     }
 
+    /**
+     * Resets sorted-issued coupon state and reinitializes the Redis counter.
+     *
+     * Executes in a new (REQUIRES_NEW) transaction: clears sorted-issued records via
+     * couponSortIssuedRepository.resetIssue(), removes the Redis key identified by
+     * REDIS_COUNTER_KEY, and sets that key's value to "0".
+     */
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void resetSortedCouponAll() {
         couponSortIssuedRepository.resetIssue();
